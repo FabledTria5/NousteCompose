@@ -40,8 +40,11 @@ fun NavGraphBuilder.homeComposable(
                 sharedViewModel.action.value = action
             }
         }
+
+        val notesAction by sharedViewModel.action
+
         HomeScreen(
-            action = myAction,
+            action = notesAction,
             navigateToNoteScreen = navigateToNoteScreen,
             sharedViewModel = sharedViewModel
         )

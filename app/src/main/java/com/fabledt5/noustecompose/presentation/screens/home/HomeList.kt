@@ -3,8 +3,6 @@ package com.fabledt5.noustecompose.presentation.screens.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -17,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -149,7 +146,10 @@ fun NoteItem(
                         expanded = isDropDownExpanded,
                         onDismissRequest = { isDropDownExpanded = false }
                     ) {
-                        DropdownMenuItem(onClick = { onDeleteNoteClicked(noteItem) }) {
+                        DropdownMenuItem(onClick = {
+                            onDeleteNoteClicked(noteItem)
+                            isDropDownExpanded = false
+                        }) {
                             Text(text = "Delete note")
                         }
                     }
