@@ -5,7 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -16,7 +18,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -30,7 +31,6 @@ import com.fabledt5.noustecompose.domain.model.NoteItem
 import com.fabledt5.noustecompose.domain.model.TaskItem
 import com.fabledt5.noustecompose.presentation.components.CircleCheckBox
 import com.fabledt5.noustecompose.presentation.components.StaggeredVerticalGrid
-import timber.log.Timber
 
 @ExperimentalMaterialApi
 @Composable
@@ -79,11 +79,10 @@ fun ShowNotesList(
     navigateToNoteScreen: (noteId: Int) -> Unit,
     onDeleteNoteClicked: (note: NoteItem) -> Unit
 ) {
-    val configuration = LocalConfiguration.current
-    Box(modifier = Modifier.fillMaxSize()) {
-        StaggeredVerticalGrid(
-            maxColumnWidth = configuration.screenWidthDp.dp / 2
-        ) {
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
+        StaggeredVerticalGrid(numColumns = 2) {
             notes.forEach { note ->
                 NoteItem(
                     noteItem = note,
@@ -106,8 +105,8 @@ fun NoteItem(
 
     Card(
         modifier = Modifier
-            .padding(vertical = 5.dp, horizontal = 5.dp)
-            .wrapContentHeight(),
+            .fillMaxWidth()
+            .padding(vertical = 5.dp, horizontal = 5.dp),
         shape = RoundedCornerShape(10.dp),
         elevation = 7.dp,
         onClick = { navigateToNoteScreen(noteItem.noteId) }
@@ -157,15 +156,13 @@ fun NoteItem(
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                itemsIndexed(items = noteItem.noteTasks) { index, item ->
-                    TaskItem(
-                        task = item,
-                        itemIndex = index,
-                        textColor = Color.White,
-                        checkBoxColor = Color.White
-                    )
-                }
+            repeat(times = noteItem.noteTasks.size) {
+                TaskItem(
+                    task = noteItem.noteTasks[it],
+                    itemIndex = it,
+                    textColor = Color.White,
+                    checkBoxColor = Color.White
+                )
             }
         }
     }
@@ -191,6 +188,7 @@ fun TaskItem(task: TaskItem, itemIndex: Int, textColor: Color, checkBoxColor: Co
             text = task.taskText,
             color = textColor,
             overflow = TextOverflow.Ellipsis,
+            maxLines = 2,
             textDecoration = if (task.isTaskDone)
                 TextDecoration.LineThrough
             else
